@@ -1,0 +1,40 @@
+{
+  "id": 1,
+  "title": "Valid Post",
+  "slug": "valid-post",
+  "body": "This is a properly structured post body.",
+  "pubDate": "2025-03-01",
+  "category": {
+    "id": 10,
+    "name": "Tech",
+    "slug": "tech"
+  }
+}
+
+{
+  "id": 2,
+  "title": "No Category",
+  "slug": "no-category",
+  "body": "This post has no category.",
+  "pubDate": "2025-03-02",
+  "category": null
+}
+
+"this is not an object"
+
+{
+  "id": 3,
+  "slug": "missing-title",
+  "body": "Missing title field.",
+  "pubDate": "2025-03-03",
+  "category": null
+}
+
+{
+  "id": "not-a-number",
+  "title": 123,
+  "slug": true,
+  "body": {},
+  "pubDate": [],
+  "category": null
+}
