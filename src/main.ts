@@ -1,33 +1,69 @@
-//TIP With Search Everywhere, you can find any action, file, or symbol in your project. Press <shortcut actionId="Shift"/> <shortcut actionId="Shift"/>, type in <b>terminal</b>, and press <shortcut actionId="EditorEnter"/>. Then run <shortcut raw="npm run dev"/> in the terminal and click the link in its output to open the app in the browser.
-export function setupCounter(element: HTMLElement) {
-  //TIP Try <shortcut actionId="GotoDeclaration"/> on <shortcut raw="counter"/> to see its usages. You can also use this shortcut to jump to a declaration – try it on <shortcut raw="counter"/> on line 13.
-  let counter = 0;
-
-  const adjustCounterValue = (value: number)  => {
-    if (value >= 100) return value - 100;
-    if (value <= -100) return value + 100;
-    return value;
-  };
-
-  const setCounter = (value: number) => {
-    counter = adjustCounterValue(value);
-    //TIP WebStorm has lots of inspections to help you catch issues in your project. It also has quick fixes to help you resolve them. Press <shortcut actionId="ShowIntentionActions"/> on <shortcut raw="text"/> and choose <b>Inline variable</b> to clean up the redundant code.
-    const text = `${counter}`;
-    element.innerHTML = text;
-  };
-
-  document.getElementById('increaseByOne')?.addEventListener('click', () => setCounter(counter + 1));
-  document.getElementById('decreaseByOne')?.addEventListener('click', () => setCounter(counter - 1));
-  document.getElementById('increaseByTwo')?.addEventListener('click', () => setCounter(counter + 2));
-
-  //TIP In the app running in the browser, you’ll find that clicking <b>-2</b> doesn't work. To fix that, rewrite it using the code from lines 19 - 21 as examples of the logic.
-  document.getElementById('decreaseByTwo')
-
-  //TIP Let’s see how to review and commit your changes. Press <shortcut actionId="GotoAction"/> and look for <b>commit</b>. Try checking the diff for a file – double-click main.ts to do that.
-  setCounter(0);
+// A helper to display results in the page instead of the console.
+function show(label: string, value: unknown): void {
+  const output = document.getElementById('output')!;
+  const line = document.createElement('p');
+  line.textContent = `${label}: ${String(value)}`;
+  output.appendChild(line);
 }
 
-//TIP To find text strings in your project, you can use the <shortcut actionId="FindInPath"/> shortcut. Press it and type in <b>counter</b> – you’ll get all matches in one place.
-setupCounter(document.getElementById('counter-value') as HTMLElement);
+// Write a function greet(name: string, times: number): string
+// that returns "Hello, <name>! ".repeat(times).trim()
+// Try calling it with greet("Alice", "3") — TypeScript should error.
 
-//TIP There's much more in WebStorm to help you be more productive. Press <shortcut actionId="Shift"/> <shortcut actionId="Shift"/> and search for <b>Learn WebStorm</b> to open our learning hub with more things for you to try.
+function greet(_name: string, times: number): string {
+  return `Hello, ${_name}! ` .repeat(times).trim();
+}
+
+// Write a function clamp(value: number, min: number, max: number): number
+// that returns value clamped to [min, max].
+function clamp(value: number, min: number, max: number): number{
+  return Math.max(Math.max(value, min), Math.min(value, max));
+}
+
+
+show('greet', greet('World', 2));
+show('clamp(15, 0, 10)', clamp(15, 0, 10)); // → 10
+show('clamp(-5, 0, 10)', clamp(-5, 0, 10)); // → 0
+
+
+// Write a function formatDuration(totalSeconds: number): string
+// that converts seconds to a human-readable string.
+// Examples:
+//   formatDuration(0)     → "0s"
+//   formatDuration(62)    → "1m 2s"
+//   formatDuration(3661)  → "1h 1m 1s"
+//   formatDuration(86400) → "24h 0m 0s"
+// Do not show hours if totalSeconds < 3600.
+// Do not show minutes if totalSeconds < 60.
+function formatDuration(totalSeconds: number): string {
+  if (totalSeconds < 0) {
+    throw new Error("Time can't be negative");
+  }
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds - hours * 3600) / 60);
+  const seconds = totalSeconds - hours * 3600 - minutes * 60;
+
+  if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+  if (minutes > 0) return `${minutes}m ${seconds}s`;
+  return `${seconds}s`;
+}
+
+// Render a table of test cases in the page:
+const testCases: Array<[number, string]> = [
+  [0, "0s"], [5, "5s"], [62, "1m 2s"],
+  [3661, "1h 1m 1s"], [86400, "24h 0m 0s"],
+];
+
+const table = document.createElement("table");
+table.innerHTML = "<tr><th>Input</th><th>Expected</th><th>Got</th><th>✓</th></tr>";
+for (const [input, expected] of testCases) {
+  const got = formatDuration(input);
+  const pass = got === expected;
+  const row = document.createElement("tr");
+  row.innerHTML = `<td>${input}</td><td>${expected}</td><td>${got}</td>
+                     <td>${pass ? "✅" : "❌"}</td>`;
+  if (!pass) row.classList.add("error");
+  table.appendChild(row);
+}
+document.getElementById("output")!.appendChild(table);
