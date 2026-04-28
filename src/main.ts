@@ -169,3 +169,82 @@ async function renderFetchTests(): Promise<void> {
 /* execute */
 void renderTodoComparison();
 void renderFetchTests();
+
+import { Post, summarise, filterByCategory, sortPosts } from './blog';
+
+const posts: Post[] = [
+  {
+    id: 1,
+    title: 'Hello TypeScript',
+    slug: 'hello-ts',
+    body: 'TypeScript is JavaScript with types. It compiles to plain JS.',
+    pubDate: '2025-01-01',
+    category: { id: 1, name: 'Tech', slug: 'tech' },
+  },
+  {
+    id: 2,
+    title: 'CSS Grid',
+    slug: 'css-grid',
+    body: 'CSS Grid is a two-dimensional layout system for the web.',
+    pubDate: '2025-01-15',
+    category: { id: 2, name: 'Frontend', slug: 'frontend' },
+  },
+  {
+    id: 3,
+    title: 'Django REST',
+    slug: 'django-rest',
+    body: 'Build a REST API with Django and serve JSON to any client.',
+    pubDate: '2025-02-01',
+    category: { id: 1, name: 'Tech', slug: 'tech' },
+  },
+];
+
+function renderPostCard(post: Post): HTMLElement {
+  const card = document.createElement('article');
+  card.innerHTML = `<h3>${post.title}</h3><p>${summarise(post)}</p>`;
+  return card;
+}
+
+const postOutput = document.getElementById('output')!;
+
+/* ---------- SORT SELECTOR ---------- */
+
+const select = document.createElement('select');
+
+select.innerHTML = `
+  <option value="title">Sort by title</option>
+  <option value="date">Sort by date</option>
+  <option value="category">Sort by category</option>
+`;
+
+postOutput.appendChild(select);
+
+/* ---------- RENDER PIPELINE ---------- */
+
+const listContainer = document.createElement('div');
+postOutput.appendChild(listContainer);
+
+function renderPosts(list: Post[]): void {
+  listContainer.innerHTML = '';
+  for (const post of list) {
+    listContainer.appendChild(renderPostCard(post));
+  }
+}
+
+/* initial render */
+let currentSort: 'title' | 'date' | 'category' = 'title';
+renderPosts(sortPosts(posts, currentSort));
+
+/* reactive update */
+select.addEventListener('change', () => {
+  currentSort = select.value as typeof currentSort;
+  const sorted = sortPosts(posts, currentSort);
+  renderPosts(sorted);
+});
+
+/* ---------- FILTER DEMO (unchanged) ---------- */
+
+const techPosts = filterByCategory(posts, 'tech');
+const filteredSection = document.createElement('div');
+filteredSection.innerHTML = `<h3>Tech posts: ${techPosts.map((p) => p.title).join(', ')}</h3>`;
+postOutput.appendChild(filteredSection);
