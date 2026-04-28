@@ -248,3 +248,68 @@ const techPosts = filterByCategory(posts, 'tech');
 const filteredSection = document.createElement('div');
 filteredSection.innerHTML = `<h3>Tech posts: ${techPosts.map((p) => p.title).join(', ')}</h3>`;
 postOutput.appendChild(filteredSection);
+
+
+
+import { Shape, area, renderShape, validatePost } from './status';
+
+/* ---------- SVG GALLERY ---------- */
+
+const shapes: Shape[] = [
+  { kind: 'circle', radius: 40 },
+  { kind: 'rectangle', width: 80, height: 50 },
+  { kind: 'triangle', base: 80, height: 60 },
+];
+
+const gallery = document.createElement('div');
+
+for (const s of shapes) {
+  const wrapper = document.createElement('div');
+
+  const svg = renderShape(s);
+  const label = document.createElement('p');
+  label.textContent = `Area: ${area(s).toFixed(2)}`;
+
+  wrapper.appendChild(svg);
+  wrapper.appendChild(label);
+  gallery.appendChild(wrapper);
+}
+
+output.appendChild(gallery);
+
+/* ---------- VALIDATION UI ---------- */
+
+const textarea = document.createElement('textarea');
+textarea.rows = 10;
+textarea.cols = 50;
+
+const button = document.createElement('button');
+button.textContent = 'Validate';
+
+const resultBox = document.createElement('div');
+
+output.appendChild(textarea);
+output.appendChild(button);
+output.appendChild(resultBox);
+
+button.addEventListener('click', () => {
+  resultBox.innerHTML = '';
+
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(textarea.value);
+  } catch {
+    resultBox.textContent = '❌ Invalid JSON';
+    return;
+  }
+
+  const result = validatePost(parsed);
+
+  if (result.ok) {
+    resultBox.textContent = '✅ Valid Post';
+    resultBox.appendChild(renderPostCard(result.post));
+  } else {
+    resultBox.textContent = `❌ Invalid: ${result.reason}`;
+  }
+});
