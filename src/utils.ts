@@ -5,13 +5,13 @@ function identity<T>(value: T): T {
   return value;
 }
 
-// TODO: Write a generic function first<T>(arr: T[]): T | undefined
+// Write a generic function first<T>(arr: T[]): T | undefined
 // that returns the first element of an array, or undefined if empty.
 function first<T>(arr: T[]): T | undefined {
   return arr.length > 0 ? arr[0] : undefined;
 }
 
-// TODO: Write a generic function groupBy<T>(
+// Write a generic function groupBy<T>(
 //     items: T[],
 //     keyFn: (item: T) => string
 // ): Record<string, T[]>
